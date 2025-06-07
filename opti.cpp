@@ -237,3 +237,198 @@ pair<int, set<pair<pair<double, double> , pair<double, double>>>> generate_strip
   achieved = max(achieved, cost + ex);
   return {cost + ex, fin};
 }
+
+pair<int, set<pair<pair<double, double> , pair<double, double>>>> generatebestcrystals(int take){
+  vector<pair<int, pair<int, int>>> t;
+  for(auto i : crystal){
+    t.push_back({pts[{i.x, i.y}], {i.x, i.y}});
+  }
+  sort(rall(t));
+  int curr = 0;
+  map<int, set<pair<int, int>>> s;
+  int took = 0;
+  for(int i = 0; i < t.size() && took < take; i++){      
+    if(t[i].second.second == 0) continue;
+    if(t[i].second.second == 1e4) continue;
+    if(t[i].second.first == 0) continue;
+    if(t[i].second.first == 1e4) continue;
+    curr += t[i].first;
+    if(s[t[i].second.first].find(t[i].second) != s[t[i].second.first].end()){
+      continue;
+    }
+    s[t[i].second.first].insert(t[i].second);
+    took++;
+  }
+  double minx = 1e4, maxx = 0;
+  for(auto i : s){
+    minx = min(minx, (double) i.first);
+    maxx = max(maxx, (double) i.first);
+  }
+  double top = 1e4;
+  int tempsc = 0;
+  for(int i = minx; i <= maxx; i++){
+    tempsc += pts[{i, 1e4}];
+  }  
+  set<pair<pair<double, double>, pair<double, double>>> fin;
+  if(tempsc < 0){
+    top = 1e4 - 0.1;
+  }
+  if(minx != 0) minx -= 0.2;
+  if(maxx != 1e4) maxx -= 0.1;
+  fin.insert({{minx, top}, {maxx, top}});
+  double lst = minx;
+  for(auto i : s){
+    if(i.first - 0.2 == minx){
+      auto it = i.second.begin();
+      double mxy = it -> second;
+      mxy -= 0.1;
+      fin.insert({{minx, top}, {minx, mxy}});
+      double currx = minx;
+      fin.insert({{currx, mxy}, {currx + 0.3, mxy}});
+      fin.insert({{currx + 0.3, mxy}, {currx + 0.3, mxy + 0.2}});
+      fin.insert({{currx + 0.3, mxy + 0.2}, {currx + 0.1, mxy + 0.2}});
+      currx += 0.1;
+      double curry = mxy + 0.2;
+      int n1 = i.second.size();
+      it = i.second.begin();
+      it++;
+      for(int j = 1; j < n1 && it != i.second.end(); j++){    
+        int x1 = it -> first;;
+        int y1 = it -> second;
+        fin.insert({{currx, curry}, {currx, y1 - 0.1}});
+        fin.insert({{currx, y1 - 0.1}, {x1 + 0.1, y1 - 0.1}});
+        fin.insert({{x1 + 0.1, y1 - 0.1}, {x1 + 0.1, y1 + 0.1}});
+        fin.insert({{x1 + 0.1, y1 + 0.1}, {currx, y1 + 0.1}});
+        curry = y1 + 0.1;
+        it++;
+      }
+      fin.insert({{currx, curry}, {currx, top - 0.1}});
+      lst = currx;
+    }
+    else if(i.first - 0.1 == maxx){
+      auto it = i.second.begin();
+      double mxy = it -> second;
+      mxy -= 0.1;
+      double currx = i.first - 0.2;
+      fin.insert({{lst, top - 0.1}, {currx, top - 0.1}});
+      fin.insert({{currx, top - 0.1}, {currx, mxy}});
+      fin.insert({{currx, mxy}, {currx + 0.3, mxy}});
+      fin.insert({{currx + 0.3, mxy}, {currx + 0.3, mxy + 0.2}});
+      fin.insert({{currx + 0.3, mxy + 0.2}, {currx + 0.1, mxy + 0.2}});
+      currx += 0.1;
+      double curry = mxy + 0.2;
+      int n1 = i.second.size();
+      it = i.second.begin();
+      it++;
+      for(int j = 1; j < n1 && it != i.second.end(); j++){
+        int x1 = it -> first;
+        int y1 = it -> second;
+        fin.insert({{currx, curry}, {currx, y1 - 0.1}});
+        fin.insert({{currx, y1 - 0.1}, {x1 + 0.1, y1 - 0.1}});
+        fin.insert({{x1 + 0.1, y1 - 0.1}, {x1 + 0.1, y1 + 0.1}});
+        fin.insert({{x1 + 0.1, y1 + 0.1}, {currx, y1 + 0.1}});
+        curry = y1 + 0.1;
+        it++;
+      }
+      fin.insert({{currx, curry}, {currx, top}});
+      lst = currx;
+    }
+    else{
+      auto it = i.second.begin();
+      double mxy = it -> second;
+      mxy -= 0.1;
+      double currx = i.first - 0.2;
+      fin.insert({{lst, top - 0.1}, {currx, top - 0.1}});
+      fin.insert({{currx, top - 0.1}, {currx, mxy}});
+      fin.insert({{currx, mxy}, {currx + 0.3, mxy}});
+      fin.insert({{currx + 0.3, mxy}, {currx + 0.3, mxy + 0.2}});
+      fin.insert({{currx + 0.3, mxy + 0.2}, {currx + 0.1, mxy + 0.2}});
+      currx += 0.1;
+      double curry = mxy + 0.2;
+      int n1 = i.second.size();
+      it = i.second.begin();
+      it++;
+      for(int j = 1; j < n1 && it != i.second.end(); j++){
+        int x1 = it -> first;
+        int y1 = it -> second;
+        fin.insert({{currx, curry}, {currx, y1 - 0.1}});
+        fin.insert({{currx, y1 - 0.1}, {x1 + 0.1, y1 - 0.1}});
+        fin.insert({{x1 + 0.1, y1 - 0.1}, {x1 + 0.1, y1 + 0.1}});
+        fin.insert({{x1 + 0.1, y1 + 0.1}, {currx, y1 + 0.1}});
+        curry = y1 + 0.1;
+        it++;
+      }
+      fin.insert({{currx, curry}, {currx, top - 0.1}});
+      lst = currx;
+    }
+  }
+  return {curr + max(0ll, tempsc), fin};
+}
+
+pair<int, set<pair<pair<double, double>, pair<double, double>>>> generateworstmines(int take){
+  vector<pair<int, pair<int, int>>> t;
+  for(auto i : mine){
+    t.push_back({pts[{i.x, i.y}], {i.x, i.y}});
+  }
+  sort(all(t));
+  int curr = totalPositive + totalNegative;
+  map<int, set<pair<int, int>>> s;
+  int took = 0;
+  for(int i = 0; i < t.size() && took < take; i++){      
+    if(t[i].second.second == 0) continue;
+    if(t[i].second.second == 1e4) continue;
+    if(t[i].second.first == 0) continue;
+    if(t[i].second.first == 1e4) continue;
+    if(s[t[i].second.first].find(t[i].second) != s[t[i].second.first].end()){
+      continue;
+    }
+    curr -= t[i].first;
+    s[t[i].second.first].insert(t[i].second);
+    took++;
+  }
+  double top = 1e4 - 0.1;  
+  set<pair<pair<double, double>, pair<double, double>>> fin;
+  fin.insert({{1e4 - 0.1, top}, {1e4 - 0.1, 0.1}});
+  fin.insert({{1e4 - 0.1, 0.1}, {0.1, 0.1}});
+  fin.insert({{0.1, 0.1}, {0.1, top}});
+  double lst = 0.1;
+  for(auto i : s){
+    auto it = i.second.begin();
+    double mxy = it->second;
+    mxy -= 0.1;
+    double currx = i.first - 0.2;
+    fin.insert({{lst, top}, {currx, top}});
+    fin.insert({{currx, top}, {currx, mxy}});
+    fin.insert({{currx, mxy}, {currx + 0.3, mxy}});
+    fin.insert({{currx + 0.3, mxy}, {currx + 0.3, mxy + 0.2}});
+    fin.insert({{currx + 0.3, mxy + 0.2}, {currx + 0.1, mxy + 0.2}});
+    currx += 0.1;
+    double curry = mxy + 0.2;
+    int n1 = i.second.size();
+    it++;
+    it = i.second.begin();
+    it++;
+    for(int j = 1; j < n1 && it != i.second.end(); j++){    
+      int x1 = it -> first;
+      int y1 = it -> second;
+      fin.insert({{currx, curry}, {currx, y1 - 0.1}});
+      fin.insert({{currx, y1 - 0.1}, {x1 + 0.1, y1 - 0.1}});
+      fin.insert({{x1 + 0.1, y1 - 0.1}, {x1 + 0.1, y1 + 0.1}});
+      fin.insert({{x1 + 0.1, y1 + 0.1}, {currx, y1 + 0.1}});
+      curry = y1 + 0.1;
+      it++;
+    }
+    fin.insert({{currx, curry}, {currx, top}});
+    lst = currx;
+  }
+  fin.insert({{lst, top}, {1e4 - 0.1, top}});
+  for(int i = 0; i <= 1e4; i++){
+    curr -= pts[{i, 1e4}];
+    curr -= pts[{i, 0}];
+  }
+  for(int i = 1; i < 1e4; i++){
+    curr -= pts[{0, i}];
+    curr -= pts[{1e4, i}];
+  }
+  return {curr, fin};
+}
