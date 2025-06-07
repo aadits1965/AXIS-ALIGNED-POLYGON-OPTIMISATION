@@ -37,7 +37,7 @@ This C++ program evaluates multiple polygon construction strategies to find the 
 
 ## 📊 Output Example
 ```
-12345.678901
+-12345.678901
 0.0 0.0 0.0 5000.0
 0.0 5000.0 5000.0 5000.0
 5000.0 5000.0 5000.0 0.0
