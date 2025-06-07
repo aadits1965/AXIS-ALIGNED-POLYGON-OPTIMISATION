@@ -432,3 +432,52 @@ pair<int, set<pair<pair<double, double>, pair<double, double>>>> generateworstmi
   }
   return {curr, fin};
 }
+signed main(){
+  ios_base::sync_with_stdio(false);
+  cin.tie(NULL);
+  int start = 1, end = 10;
+  total = 0;
+  total_achieved = 0;
+  for(int i = start; i <= end; i++){
+    string inp = "";
+    string out = "";
+    string num = to_string(i);
+    if(num.size() == 1) num = "0" + num;
+    inp = "input/input" + num + ".txt";
+    out = "output/output" + num + ".txt";
+    freopen(inp.c_str(), "r", stdin); 
+    freopen(out.c_str(), "w", stdout); 
+    achieved = 0;
+    _input();   
+    pair<int, set<pair<pair<double, double>, pair<double, double>>>> ans = {0, {}};
+    for(int j = 0; j >= -45000; j-= 1000){
+      pair<int, set<pair<pair<double, double>, pair<double, double>>>> temp = generate_stripperX(j);
+      if(ans.first < temp.first){
+        ans = temp;
+      }
+    }
+    for(int j = 0; j >= -45000; j -= 1000){
+      pair<int, set<pair<pair<double, double>, pair<double, double>>>> temp = generate_stripperY(j);
+      if(ans.first < temp.first){
+        ans = temp;
+      }
+    }
+    pair<int, set<pair<pair<double, double>, pair<double, double>>>> ans1;
+    for(int take = K; take <= min(min(n,m),K + 1000); take += 10) {
+      auto res1 = generatebestcrystals(take);
+      if(res1.first > ans.first) ans = res1;
+      auto res2 = generateworstmines(take);
+      if(res2.first > ans.first) ans = res2;
+    }
+    if(ans1.first >= ans.first) ans = ans1;
+    int perimeter=0;
+    for(auto i : ans.second){
+      perimeter+=abs(i.first.first+i.first.second-(i.second.first+i.second.second));
+    }
+    cout << ans.first*-1+perimeter << endl;
+    for(auto i : ans.second){
+      cout << i.first.first << " " << i.first.second << " " << i.second.first << " " << i.second.second << endl;
+    }
+  }
+  return 0;
+}
