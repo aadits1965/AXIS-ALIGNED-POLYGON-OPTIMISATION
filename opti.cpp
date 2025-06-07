@@ -238,7 +238,7 @@ pair<int, set<pair<pair<double, double> , pair<double, double>>>> generate_strip
   return {cost + ex, fin};
 }
 
-pair<int, set<pair<pair<double, double> , pair<double, double>>>> generateBest165(){
+pair<int, set<pair<pair<double, double> , pair<double, double>>>> generatebestcrystals(int take){
   vector<pair<int, pair<int, int>>> t;
   for(auto i : crystal){
     t.push_back({pts[{i.x, i.y}], {i.x, i.y}});
@@ -247,7 +247,7 @@ pair<int, set<pair<pair<double, double> , pair<double, double>>>> generateBest16
   int curr = 0;
   map<int, set<pair<int, int>>> s;
   int took = 0;
-  for(int i = 0; i < t.size() && took < 166; i++){      
+  for(int i = 0; i < t.size() && took < take; i++){      
     if(t[i].second.second == 0) continue;
     if(t[i].second.second == 1e4) continue;
     if(t[i].second.first == 0) continue;
@@ -365,7 +365,7 @@ pair<int, set<pair<pair<double, double> , pair<double, double>>>> generateBest16
   return {curr + max(0ll, tempsc), fin};
 }
 
-pair<int, set<pair<pair<double, double>, pair<double, double>>>> generateWorst165(){
+pair<int, set<pair<pair<double, double>, pair<double, double>>>> generateworstmines(int take){
   vector<pair<int, pair<int, int>>> t;
   for(auto i : mine){
     t.push_back({pts[{i.x, i.y}], {i.x, i.y}});
@@ -374,7 +374,7 @@ pair<int, set<pair<pair<double, double>, pair<double, double>>>> generateWorst16
   int curr = totalPositive + totalNegative;
   map<int, set<pair<int, int>>> s;
   int took = 0;
-  for(int i = 0; i < t.size() && took < 166; i++){      
+  for(int i = 0; i < t.size() && took < take; i++){      
     if(t[i].second.second == 0) continue;
     if(t[i].second.second == 1e4) continue;
     if(t[i].second.first == 0) continue;
@@ -463,11 +463,19 @@ signed main(){
         ans = temp;
       }
     }
-    pair<int, set<pair<pair<double, double>, pair<double, double>>>> ans1 = generateBest165();
+    pair<int, set<pair<pair<double, double>, pair<double, double>>>> ans1;
+    for(int take = K; take <= min(min(n,m),K + 1000); take += 10) {
+      auto res1 = generatebestcrystals(take);
+      if(res1.first > ans.first) ans = res1;
+      auto res2 = generateworstmines(take);
+      if(res2.first > ans.first) ans = res2;
+    }
     if(ans1.first >= ans.first) ans = ans1;
-    ans1 = generateWorst165();
-    if(ans1.first >= ans.first) ans = ans1;
-    cout << ans.first << endl;
+    int perimeter=0;
+    for(auto i : ans.second){
+      perimeter+=abs(i.first.first+i.first.second-(i.second.first+i.second.second));
+    }
+    cout << ans.first*-1+perimeter << endl;
     for(auto i : ans.second){
       cout << i.first.first << " " << i.first.second << " " << i.second.first << " " << i.second.second << endl;
     }
